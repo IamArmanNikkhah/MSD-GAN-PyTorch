@@ -27,6 +27,10 @@ def train(
     model_dir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(input_data)
+
+    ## --------- DEBUG -------------##
+    print("df shape: ", df.shape)
+    ## --------- DEBUG -------------##
     train_dl, test_dl = _prepare_data(df=df,
                                       batch_size=batch_size,
                                       window_size=window_size,

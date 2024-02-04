@@ -22,7 +22,11 @@ class WindowDataset(Dataset):
         self.windows = _window_array(df.values, window_size, window_slide)
 
     def __getitem__(self, index: int) -> torch.Tensor:
-        return torch.as_tensor(self.windows[index].copy()).float()
+        item = torch.as_tensor(self.windows[index].copy()).float()
+        ## --------- DEBUG -------------##
+        print("each item shape is: ",item.shape)
+        ## --------- DEBUG -------------##
+        return item
 
     def __len__(self) -> int:
         return self.windows.shape[0]

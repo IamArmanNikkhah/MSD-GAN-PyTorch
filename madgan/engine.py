@@ -53,6 +53,12 @@ def train_one_epoch(generator: nn.Module,
     discriminator.train()
 
     for i, (real, z) in enumerate(zip(real_dataloader, latent_dataloader)):
+        
+        ## --------- DEBUG -------------##
+        print('real shape is: ',real.shape)
+        print('z shape is: ', z.shape)
+        ## --------- DEBUG -------------##
+        
         bs = real.size(0)
         real_labels = torch.full((bs, ), normal_label).float().to(real.device)
         fake_labels = torch.full((bs, ), anomaly_label).float().to(real.device)
