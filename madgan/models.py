@@ -105,7 +105,8 @@ class Discriminator(nn.Module):
             x = torch.cat([x, batch_mean], dim=-1)
 
         rnn_output, _ = self.lstm(x)
-        return self.activation(self.linear(rnn_output))
+        last_output = rnn_output[:, -1, :]
+        return self.activation(self.linear(last_output))
 
     def save(self, fpath: Union[Path, str]) -> None:
         chkp = {
