@@ -71,6 +71,10 @@ def prepare_dataloader(ds: Dataset,
     """
     sampler: Optional[DistributedSampler] = (DistributedSampler(ds)
                                              if is_distributed else None)
+    ## --------- DEBUG -------------##
+    print("the size of the dataset is:", ds.shape)
+    ## --------- DEBUG -------------##
+
     return DataLoader(ds, batch_size=batch_size, sampler=sampler, **kwargs)
 
 
