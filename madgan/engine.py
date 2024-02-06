@@ -59,10 +59,10 @@ def train_one_epoch(generator: nn.Module,
         print('z shape is: ', z.shape)
         ## --------- DEBUG -------------##
         
-        bs = real.size(0)
+        bs          = real.size(0)
         real_labels = torch.full((bs, ), normal_label).float().to(real.device)
         fake_labels = torch.full((bs, ), anomaly_label).float().to(real.device)
-        all_labels = torch.cat([real_labels, fake_labels])
+        all_labels  = torch.cat([real_labels, fake_labels])
 
         # Generate fake samples with the generator
         fake = generator(z)
