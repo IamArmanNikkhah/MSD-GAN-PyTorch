@@ -28,9 +28,7 @@ def train(
 
     df = pd.read_csv(input_data)
 
-    ## --------- DEBUG -------------##
-    print("df shape: ", df.shape)
-    ## --------- DEBUG -------------##
+    
     train_dl, test_dl = _prepare_data(df=df,
                                       batch_size=batch_size,
                                       window_size=window_size,
@@ -50,7 +48,7 @@ def train(
     discriminator = madgan.models.Discriminator(input_dim=df.shape[-1],
                                                 hidden_units=hidden_dim,
                                                 add_batch_mean=True)
-    generator.to(DEVICE)
+    discriminator.to(DEVICE)
 
     discriminator_optim = torch.optim.Adam(discriminator.parameters(), lr=lr)
     generator_optim = torch.optim.Adam(generator.parameters(), lr=lr)
