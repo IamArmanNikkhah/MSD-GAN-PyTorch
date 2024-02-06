@@ -73,7 +73,8 @@ def prepare_dataloader(ds: Dataset,
                                              if is_distributed else None)
     
 
-    return DataLoader(ds, batch_size=batch_size, sampler=sampler, **kwargs)
+    return DataLoader(ds, batch_size=batch_size, sampler=sampler, drop_last=True, **kwargs)
+
 
 
 def _window_array(array: np.ndarray, window_size: int, window_slide: int) -> np.ndarray:
