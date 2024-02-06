@@ -108,10 +108,24 @@ class Discriminator(nn.Module):
 
         self.linear = nn.Linear(in_features=self.hidden_units + extra_features,
                                 out_features=1)
-        nn.init.trunc_normal_(self.linear.bias)
-        nn.init.trunc_normal_(self.linear.weight)
+        
+        self.init_weights()
 
         self.activation = nn.Sigmoid()
+
+    def init_weights(self):
+        # Initialize LSTM weights
+        for name, param in self.lstm.named_parameters():
+            if 'weight_ih' in name:
+                nn.init.xavier_uniform_(param.data)
+            elif 'weight_hh' in name:
+                nn.init.xavier_uniform_(param.data)
+            elif 'bias' in name:
+                param.data.fill_(0)
+
+        # Initialize linear layer weights
+        nn.init.xavier_uniform_(self.linear.weight)
+        nn.init.zeros_(self.linear.bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.add_batch_mean:
