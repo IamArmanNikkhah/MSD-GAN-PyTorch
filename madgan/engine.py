@@ -94,12 +94,12 @@ def train_one_epoch(generator: nn.Module,
         generator_optimizer.step()
 
         if (i + 1) % log_every == 0:
-            discriminator_acc = ((d_logits.detach() >
-                                  .5) == all_labels).float()
-            discriminator_acc = discriminator_acc.sum().div(bs)
+            
+            discriminator_acc = ((d_logits.detach() > .5) == all_labels).float()
+            discriminator_acc = discriminator_acc.mean()  # Use mean instead of sum().div(bs)
 
-            generator_acc = (g_logits.detach() > .5 == real_labels).float()
-            generator_acc = generator_acc.sum().div(bs)
+            generator_acc = ((g_logits.detach() > .5) == real_labels).float()
+            generator_acc = generator_acc.mean()
 
             log = {
                 "generator_loss": cheat_loss.item(),
