@@ -6,6 +6,8 @@ from torch.utils.data.distributed import DistributedSampler
 import pandas as pd
 import numpy as np
 
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class WindowDataset(Dataset):
     """Dataset to iterate using sliding windows over a pandas DataFrame.
@@ -22,10 +24,8 @@ class WindowDataset(Dataset):
         self.windows = _window_array(df.values, window_size, window_slide)
 
     def __getitem__(self, index: int) -> torch.Tensor:
-        item = torch.as_tensor(self.windows[index].copy()).float()
-        ## --------- DEBUG -------------##
-        print("each item shape is: ",item.shape)
-        ## --------- DEBUG -------------##
+        
+        item = torch.as_tensor(self.windows[index].copy()).float().to(DEVICE)
         return item
 
     def __len__(self) -> int:
@@ -51,7 +51,7 @@ class LatentSpaceIterator(object):
         return self
 
     def __next__(self) -> torch.Tensor:
-        return self.noise_fn(*self.noise_shape)
+        return self.noise_fn(*self.noise_shape).to(DEVICE)
 
 
 def prepare_dataloader(ds: Dataset,
