@@ -24,7 +24,7 @@ def train_one_epoch(generator: nn.Module,
                     normal_label: int = 0,
                     anomaly_label: int = 1,
                     epoch: int = 0,
-                    log_every: int = 30) -> None:
+                    log_every: int = 1) -> None:
     """Trains a GAN for a single epoch.
 
     Args:
