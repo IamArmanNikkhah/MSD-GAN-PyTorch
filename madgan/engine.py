@@ -172,11 +172,11 @@ def evaluate(generator: nn.Module,
         d_fake_loss = loss_fn(fake_logits.view(-1), fake_labels)
         d_loss = d_real_loss + d_fake_loss
 
-        discriminator_acc = ((d_logits > .5) == all_labels).float()
-        discriminator_acc = discriminator_acc.sum().div(bs)
+        discriminator_acc = torch.eq((d_logits > .5) , all_labels).float()
+        discriminator_acc = discriminator_acc.mean()
 
-        generator_acc = (fake_logits > .5 == real_labels).float()
-        generator_acc = generator_acc.sum().div(bs)
+        generator_acc = torch.eq((fake_logits > .5), real_labels).float()
+        generator_acc = generator_acc.mean()
 
         log = {
             "discriminator_real_loss": d_real_loss.item(),
