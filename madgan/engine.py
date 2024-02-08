@@ -49,50 +49,61 @@ def train_one_epoch(generator: nn.Module,
         log_every (int, optional): Log the training progess every n steps. 
             Defaults to 30.
     """
+    
+    # ----------
+    #  Training
+    # ----------
+   
     generator.train()
     discriminator.train()
 
     for i, (real, z) in enumerate(zip(real_dataloader, latent_dataloader)):
         
-        ## --------- DEBUG -------------##
-        print('real shape is: ',real.shape)
-        print('z shape is: ', z.shape)
-        ## --------- DEBUG -------------##
-        
+        # Generating the Labels
         bs          = real.size(0)
         real_labels = torch.full((bs, ), normal_label).float().to(real.device)
         fake_labels = torch.full((bs, ), anomaly_label).float().to(real.device)
         all_labels  = torch.cat([real_labels, fake_labels])
 
+        
         # Generate fake samples with the generator
         fake = generator(z)
-
-        # Update discriminator
+        
+        # ---------------------
+        #  Train Discriminator
+        # ---------------------
         discriminator_optimizer.zero_grad()
         discriminator.train()
         real_logits = discriminator(real)
         fake_logits = discriminator(fake.detach())
         d_logits = torch.cat([real_logits, fake_logits])
 
-        # Discriminator tries to identify the true nature of each sample
-        # (anomaly or normal)
+        
         d_real_loss = loss_fn(real_logits.view(-1), real_labels)
         d_fake_loss = loss_fn(fake_logits.view(-1), fake_labels)
-        d_loss = d_real_loss + d_fake_loss
+        d_loss      = d_real_loss + d_fake_loss
         d_loss.backward()
 
         discriminator_optimizer.step()
 
-        # Update generator
+        # -----------------
+        #  Train Generator
+        # -----------------
         generator.zero_grad()
-        discriminator.eval()
-
+        
+        # Ensure discriminator is in training mode for backprop but prevent parameter updates
+        discriminator.train()
+        
         g_logits = discriminator(fake)
-        # Generator will improve so it can cheat the discriminator
         cheat_loss = loss_fn(g_logits.view(-1), real_labels)
         cheat_loss.backward()
         generator_optimizer.step()
 
+        # Optionally, set discriminator back to eval mode if there are subsequent operations
+        # that require it to be in eval mode. This line can be omitted if not necessary.
+        discriminator.eval()
+
+        
         if (i + 1) % log_every == 0:
             
             discriminator_acc = ((d_logits.detach() > .5) == all_labels).float()
