@@ -91,7 +91,7 @@ def train_one_epoch(generator: nn.Module,
         # -----------------
         generator.zero_grad()
         
-        # Ensure discriminator is in training mode for backprop but prevent parameter updates
+        # Ensure discriminator is in training mode for backprop but prevent parameter updates (IMPORTANT)
         discriminator.train()
         
         g_logits = discriminator(fake)
