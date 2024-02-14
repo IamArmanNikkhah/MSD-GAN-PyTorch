@@ -1,4 +1,4 @@
-# MAD-GAN PyTorch 🧠🎨
+# MSD-GAN PyTorch 🧠🎨
 
 Multivariate Anomaly Detection with GAN (MAD-GAN) PyTorch modern implementation.
 
