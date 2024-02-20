@@ -84,6 +84,55 @@ class Generator(nn.Module):
         return model
 
 
+class GeneratorWithWaveNet(nn.Module):
+    def __init__(self, latent_space_dim: int, output_dim: int, kernel_size: int, stack_size: int, layer_size: int) -> None:
+        super().__init__()
+        self.latent_space_dim = latent_space_dim
+        self.output_dim = output_dim
+        self.kernel_size = kernel_size
+        self.stack_size = stack_size
+        self.layer_size = layer_size
+
+        # Configuring WaveNet with the given parameters
+        self.wavenet = WaveNet(in_channels=latent_space_dim,
+                               out_channels=output_dim,
+                               kernel_size=kernel_size,
+                               stack_size=stack_size,
+                               layer_size=layer_size)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Assuming x has dimensions [batch, channels, sequence length]
+        # WaveNet expects a 3D Tensor (batch_size, num_channels, length_of_sequence)
+        return self.wavenet(x)
+    
+    
+    def save(self, fpath: Union[Path, str]) -> None:
+        """Saves the model's configuration and weights to the specified path."""
+        chkp = {
+            "config": {
+                "latent_space_dim": self.latent_space_dim,
+                "output_dim": self.output_dim,
+                "kernel_size": self.kernel_size,
+                "stack_size": self.stack_size,
+                "layer_size": self.layer_size
+            },
+            "weights": self.state_dict(),
+        }
+        torch.save(chkp, fpath)
+
+    @classmethod
+    def from_pretrained(
+            cls,
+            fpath: Union[Path, str],
+            map_location: Optional[torch.device] = None) -> "GeneratorWithWaveNet":
+        """Loads a pretrained model from the specified path."""
+        chkp = torch.load(fpath, map_location=map_location)
+        model = cls(**chkp.pop("config"))
+        model.load_state_dict(chkp.pop("weights"))
+        model.eval()  # Set the model to evaluation mode
+        return model
+
+
 class Discriminator(nn.Module):
 
     def __init__(self,
