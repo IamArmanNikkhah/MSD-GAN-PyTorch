@@ -1,6 +1,6 @@
 import random
 from typing import Callable, Dict, Iterator
-
+import wandb
 import numpy as np
 import torch
 import torch.nn as nn
@@ -112,6 +112,14 @@ def train_one_epoch(generator: nn.Module,
             generator_acc = ((g_logits.detach() > 0.5).squeeze() == real_labels).float()
             generator_acc = generator_acc.mean()
 
+            wandb.log({
+                "epoch": epoch,
+                "generator_loss": cheat_loss.item(),
+                "discriminator_loss": d_loss.item(),
+                "discriminator_acc": discriminator_acc.item(),
+                "generator_acc": generator_acc.item(),
+            })
+            
             log = {
                 "generator_loss": cheat_loss.item(),
                 "discriminator_loss": d_loss.item(),
