@@ -43,6 +43,12 @@ def train(
         latent_space_dim=constants.LATENT_SPACE_DIM,
         hidden_units=hidden_dim,
         output_dim=df.shape[-1])
+
+    #generator = madgan.models.GeneratorWithWaveNet(latent_space_dim=constants.LATENT_SPACE_DIM, 
+    #                                               output_dim=df.shape[-1],
+    #                                               kernel_size=2, stack_size=10,
+    #                                               layer_size = 3)
+    
     generator.to(DEVICE)
 
     discriminator = madgan.models.Discriminator(input_dim=df.shape[-1],
