@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Optional, Protocol, Union
-from wavenet import WaveNet
-
+from madgan.wavenet import WaveNet
 import torch
 import torch.nn as nn
 
